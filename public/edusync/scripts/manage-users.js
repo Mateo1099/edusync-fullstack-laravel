@@ -10,8 +10,14 @@ document.addEventListener('DOMContentLoaded',()=>{
       const btn=form.querySelector('button'); btn.disabled=true; const original=btn.textContent; btn.textContent='Procesando...';
       try{
         const payload=buildPayload(new FormData(form));
-        const res=await fetch(window.eduSyncAPI.baseURL+'/'+url,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token,Accept:'application/json'},body:JSON.stringify(payload)});
-        const data=await res.json(); if(!res.ok){ throw new Error(data.error||data.message||'Error'); }
+        const res=await fetch(window.eduSyncAPI.baseURL+'/'+url,{method:'POST',headers:{'Content-Type':'application/json; charset=UTF-8',Authorization:'Bearer '+token,Accept:'application/json'},body:JSON.stringify(payload)});
+        let data;
+        try { data=await res.json(); } catch(jsonErr) { 
+          const text=await res.text(); 
+          console.error('Respuesta no-JSON:', text.substring(0,500)); 
+          throw new Error('Error del servidor. Ver consola.'); 
+        }
+        if(!res.ok){ throw new Error(data.error||data.message||JSON.stringify(data.errors)||'Error'); }
         msg.textContent=(data.message||'Creado correctamente')+ (data.email? ' | '+data.email:'');
         msg.classList.add('ok'); msg.style.display='block'; form.reset();
       }catch(err){ msg.textContent=err.message||'Fallo'; msg.classList.add('err'); msg.style.display='block'; }
