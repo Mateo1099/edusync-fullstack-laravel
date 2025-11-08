@@ -20,7 +20,8 @@ body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-se
 .eds-muted{color:#dff}
 /* ---- Incorporación de estilos específicos (login, registro, dashboard alumno) para unificación ---- */
 /* Login */
-.login-container{width:360px;background:#ffffffeb;backdrop-filter:blur(4px);padding:2.2rem 2.4rem 2.6rem;border-radius:1.2rem;box-shadow:0 12px 40px -8px rgba(0,0,0,.25);position:relative;animation:fadeIn .6s ease;}
+main{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;}
+.login-container{width:360px;max-width:100%;background:#ffffffeb;backdrop-filter:blur(4px);padding:2.2rem 2.4rem 2.6rem;border-radius:1.2rem;box-shadow:0 12px 40px -8px rgba(0,0,0,.25);position:relative;animation:fadeIn .6s ease;}
 .login-logo{width:140px;display:block;margin:0 auto 12px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));}
 .login-container h1{font-size:1.5rem;margin:0 0 1.2rem;font-weight:600;text-align:center;color:var(--c-text);}
 .form-group{display:flex;flex-direction:column;margin-bottom:14px;}
