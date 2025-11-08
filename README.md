@@ -18,51 +18,194 @@ Sistema de gestión educativa migrado a Laravel, con arquitectura profesional y 
 ## Guía de uso
 1. Instala dependencias:
    ```bash
+   # EduSync Fullstack Laravel
+
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+
+   ## Tabla rápida
+   | Componente | Descripción |
+   |------------|-------------|
+   | Backend | Laravel 10+ (API REST protegida por Sanctum) |
+   | Frontend | HTML/CSS/JS plano (sin build frameworks) en `public/edusync` |
+   | Auth | Tokens personales (Sanctum) con logout que revoca token |
+   | Roles | Middleware `role:*` (admin, teacher, guardian, student) |
+   | Seguridad | Contraseña fuerte (regex), JSON 401 sin redirects, sin envío de contraseña por correo |
+
+   ## Tecnologías y librerías
+   - **Laravel / Eloquent** para modelos y migraciones.
+   - **Sanctum** para emisión de tokens de acceso.
+   - **MySQL (recomendado)**, aunque funciona con SQLite para pruebas rápidas.
+   - **Vite** listo para usar si decides migrar a componentes modernos.
+
+   ## Estructura destacada
+   ```
+   app/Http/Controllers    # Lógica de endpoints y validaciones
+   app/Models              # Modelos (User, Student, Teacher, Course, etc.)
+   app/Http/Middleware     # Authenticate JSON + role middleware
+   database/migrations     # Esquema relacional y tokens
+   public/edusync          # Frontend estático unificado (dashboards y vistas)
+   routes/api.php          # Definición de endpoints principales
+   ```
+
+   ## Variables de entorno mínimas (.env)
+   ```
+   APP_NAME=EduSync
+   APP_ENV=local
+   APP_KEY=base64:GENERAR_CON php artisan key:generate
+   APP_DEBUG=true
+   APP_URL=http://127.0.0.1:8000
+
+   LOG_CHANNEL=stack
+   LOG_LEVEL=debug
+
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=edusync
+   DB_USERNAME=root
+   DB_PASSWORD=yourpass
+
+   SESSION_DRIVER=file
+   CACHE_DRIVER=file
+   QUEUE_CONNECTION=sync
+
+   SANCTUM_STATEFUL_DOMAINS=127.0.0.1:8000
+   ```
+
+   ## Instalación backend
+   ```bash
    composer install
-   ```
-2. Configura tu base de datos en `.env`.
-3. Ejecuta migraciones:
-   ```bash
+   cp .env.example .env
+   php artisan key:generate
    php artisan migrate
-   ```
-4. Inicia el servidor:
-   ```bash
    php artisan serve
    ```
-5. Usa los endpoints API con autenticación y roles:
-   - `/api/students`, `/api/teachers`, `/api/courses`, etc.
 
-## Seguridad y escalabilidad
-- Todas las rutas sensibles están protegidas por autenticación y middleware de roles.
-- Los modelos y controladores están preparados para crecer y agregar nuevas funcionalidades.
-- Las relaciones entre entidades están definidas y comentadas para facilitar futuras mejoras.
+   ## Frontend estático
+   Accede vía navegador: `http://127.0.0.1:8000/edusync/login.html`.
+   Las vistas consumen la API usando `scripts/api-integration.js` (Bearer token en localStorage).
 
-## Mejoras futuras
-- Agregar tests automatizados.
-- Implementar notificaciones y eventos.
-- Integrar frontend moderno (Vue, React, etc).
-- Mejorar la gestión de permisos y auditoría.
+   ## Endpoints principales
+   Autenticación:
+   ```
+   POST /api/register      # Crea estudiante + matrícula + correo institucional
+   POST /api/login         # Devuelve { token, user }
+   POST /api/logout        # Revoca el token actual
+   GET  /api/user          # Usuario autenticado
+   ```
+   Alumno:
+   ```
+   GET /api/my/courses
+   GET /api/my/assignments
+   GET /api/my/grades
+   ```
+   Admin:
+   ```
+   CRUD /api/teachers
+   CRUD /api/guardians
+   CRUD /api/courses
+   CRUD /api/enrollments
+   ```
+   Docente:
+   ```
+   CRUD /api/assignments
+   CRUD /api/grades (limitado)
+   ```
+   Salud:
+   ```
+   GET /api/health/openssl
+   ```
 
----
+   ## Flujo de login en frontend
+   1. Usuario ingresa correo institucional + contraseña.
+   2. Se obtiene token Sanctum y se almacena en `localStorage` bajo `edusync_token`.
+   3. `header.js` construye navegación dinámica según `user.role`.
+   4. Logout limpia el token y redirige a `login.html`.
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+   ## Contraseñas y correo institucional
+   Durante registro se genera email único con slug del nombre (`nombre.apellido@edusync.com`). Nunca se envía la contraseña en claro por correo (solo aviso de creación).
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+   ## Tests (pendientes de agregar)
+   Se propondrán pruebas en `tests/Feature` para:
+   - Registro y login correcto.
+   - Acceso denegado a ruta de admin con rol student.
+   - Filtro de tareas sólo de cursos inscritos.
 
-## About Laravel
+   ## Despliegue rápido
+   ### Opción A: Railway (simplificada)
+   1. Crear proyecto → servicio Web → conectar repo.
+   2. Variables: `DB_*` (si usas MySQL remoto) o añadir addon MySQL.
+   3. Configurar build command: `composer install && php artisan migrate --force`.
+   4. Start command: `php artisan serve --host=0.0.0.0 --port=${PORT}`.
+   5. Añadir `APP_URL` con la URL pública para cookies/stateful.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+   ### Opción B: Docker Compose (portabilidad)
+   Archivo ejemplo:
+   ```yaml
+   version: '3.9'
+   services:
+      app:
+         image: laravelphp/php-fpm:8.2
+         working_dir: /var/www/html
+         volumes:
+            - ./:/var/www/html
+         depends_on:
+            - db
+      web:
+         image: nginx:alpine
+         ports:
+            - "8080:80"
+         volumes:
+            - ./:/var/www/html
+            - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+         depends_on:
+            - app
+      db:
+         image: mysql:8.0
+         environment:
+            MYSQL_DATABASE: edusync
+            MYSQL_ROOT_PASSWORD: rootpass
+         ports:
+            - "3307:3306"
+         volumes:
+            - dbdata:/var/lib/mysql
+   volumes:
+      dbdata:
+   ```
+   Luego:
+   ```bash
+   docker compose up -d
+   docker compose exec app composer install
+   docker compose exec app php artisan key:generate
+   docker compose exec app php artisan migrate --force
+   ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+   ### ¿Cuál elegir?
+   - Railway: más rápido para mostrar avances, provisioning automático.
+   - Docker Compose: reproducible en cualquier PC sin instalar PHP/MySQL localmente.
+   Recomendación: usar Docker para desarrollo colaborativo y Railway para staging/demo.
+
+   ## Seguridad y buenas prácticas vigentes
+   - Middleware `Authenticate` retorna JSON 401 (evita fugas de HTML de login).
+   - Regex de contraseña robusta.
+   - Tokens revocados en logout.
+   - Sin exposición de contraseña por email.
+   - Separación de roles estricta vía `role:*`.
+
+   ## Próximas mejoras sugeridas
+   - Añadir pruebas automáticas descritas arriba.
+   - Cachear resultados de métricas (cursos activos) con `cache()`.
+   - Comando `php artisan edusync:seed-minimal` para crear roles y admin inicial.
+   - Eliminar archivos `desktop.ini` de control de Windows del repo.
+   - Añadir CI (GitHub Actions) para `composer install && php artisan test`.
+   - Endpoint de recuperación de contraseña (flujo token + correo temporal).
+   - Rate limit a `/api/login` (Throttle middleware).
+
+   ## Cómo contribuir
+   Clonar, crear rama `feature/mi-cambio`, enviar PR con descripción clara. Mantener estilo de validaciones consistente y evitar lógica pesada en controladores (mover a servicios si crece).
+
+   ---
+   Este README cubre la capa fullstack actual (API + frontend estático). El README original de Laravel se mantiene abajo para referencia del framework.
 - [Robust background job processing](https://laravel.com/docs/queues).
 - [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
