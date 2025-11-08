@@ -453,9 +453,53 @@ php artisan view:cache           # Cachea vistas (producción)
 
 ## 💾 **¿QUÉ PASA CUANDO CAMBIO DE PC?**
 
-### **Tu base de datos y proyecto seguirán funcionando. Aquí está TODO LO QUE NECESITAS SABER:**
+### **✅ RESPUESTA CORTA: SÍ, TODO SEGUIRÁ FUNCIONANDO**
 
-### **🌐 OPCIÓN 1: Datos en Railway (RECOMENDADO para producción)**
+**Tu proyecto YA está en Railway (internet), NO en tu PC.**
+
+---
+
+## 🌐 **RAILWAY: TU BASE DE DATOS ESTÁ EN LA NUBE**
+
+### **¿Dónde están mis datos AHORA?**
+- **Aplicación**: `https://web-production-3d11.up.railway.app` (servidor de Railway)
+- **Base de datos MySQL**: En los servidores de Railway (no en tu PC)
+- **Código**: En GitHub (github.com/Mateo1099/edusync-fullstack-laravel)
+
+### **¿Qué significa esto?**
+✅ Tus datos (usuarios, cursos, tareas, calificaciones) están **guardados en internet**  
+✅ Puedes acceder a tu app desde **cualquier dispositivo** con la URL  
+✅ **No necesitas tu PC actual** para que la app funcione  
+✅ **Cuando compres tu PC nuevo**, tu app seguirá funcionando sin hacer nada  
+
+### **¿Qué necesito en mi PC nuevo?**
+
+**SOLO para editar el código (opcional):**
+1. Git → Para clonar el repositorio
+2. PHP 8.2+ → Para correr `php artisan serve` localmente
+3. Composer → Para instalar dependencias
+
+**Pasos en PC nuevo:**
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Mateo1099/edusync-fullstack-laravel.git
+cd edusync-fullstack-laravel
+
+# 2. Instalar dependencias
+composer install
+
+# 3. Listo - Ya puedes editar código y hacer push a GitHub
+# Railway detectará los cambios automáticamente
+```
+
+**NO NECESITAS:**
+- ❌ Exportar la base de datos
+- ❌ Instalar MySQL localmente (a menos que quieras desarrollar offline)
+- ❌ Configurar nada de Railway (ya está configurado)
+
+---
+
+### **🌐 OPCIÓN 1: Usar Railway como BD principal (RECOMENDADO - YA LO TIENES ASÍ)**
 
 **¿Dónde están tus datos ahora?**
 - Tu aplicación está desplegada en: `https://web-production-3d11.up.railway.app`

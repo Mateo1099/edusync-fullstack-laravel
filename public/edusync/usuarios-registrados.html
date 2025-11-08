@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Usuarios Registrados - EduSync</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="scripts/api-integration.js"></script>
+  <script src="scripts/header.js"></script>
+  <style>
+    body{align-items:flex-start;}
+    .wrap{width:100%;max-width:1200px;margin:0 auto;padding:20px}
+    h1{color:#fff;margin:18px 0 14px;font-size:1.8rem;}
+    .tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+    .tab{background:#ffffff30;color:#fff;border:none;padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600;font-size:.9rem}
+    .tab.active{background:#ffffffef;color:#033f4e}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+    .card{background:#ffffffef;padding:20px;border-radius:12px;box-shadow:0 6px 24px -6px rgba(0,0,0,.25)}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    th{background:#033f4e;color:#fff;padding:12px;text-align:left;position:sticky;top:0}
+    td{padding:10px;border-bottom:1px solid #e0e0e0}
+    tr:hover{background:#f5f9fa}
+    .badge{padding:4px 10px;border-radius:6px;font-size:.75rem;font-weight:600;display:inline-block}
+    .badge-admin{background:#ffebee;color:#c62828}
+    .badge-teacher{background:#e3f2fd;color:#1565c0}
+    .badge-student{background:#e8f5e9;color:#2e7d32}
+    .badge-guardian{background:#fff3e0;color:#e65100}
+    .refresh-btn{background:linear-gradient(90deg,#05a9c9,#06c4a8);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;margin-bottom:16px}
+    .refresh-btn:hover{filter:brightness(1.1)}
+    .empty{text-align:center;color:#666;padding:40px 20px}
+    code{background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:.8rem}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>👥 Usuarios Registrados</h1>
+  
+  <div class="tabs">
+    <button class="tab active" data-tab="todos">Todos</button>
+    <button class="tab" data-tab="admin">Administradores</button>
+    <button class="tab" data-tab="teacher">Docentes</button>
+    <button class="tab" data-tab="student">Estudiantes</button>
+    <button class="tab" data-tab="guardian">Tutores</button>
+  </div>
+
+  <div class="card">
+    <button class="refresh-btn" id="refresh">🔄 Actualizar</button>
+    
+    <div id="tab-todos" class="tab-content active">
+      <div id="list-todos"></div>
+    </div>
+    <div id="tab-admin" class="tab-content">
+      <div id="list-admin"></div>
+    </div>
+    <div id="tab-teacher" class="tab-content">
+      <div id="list-teacher"></div>
+    </div>
+    <div id="tab-student" class="tab-content">
+      <div id="list-student"></div>
+    </div>
+    <div id="tab-guardian" class="tab-content">
+      <div id="list-guardian"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+  const api=window.eduSyncAPI;
+  const token=localStorage.getItem('edusync_token');
+  
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  const getBadgeClass=role=>{
+    const map={admin:'badge-admin',teacher:'badge-teacher',student:'badge-student',guardian:'badge-guardian'};
+    return map[role]||'';
+  };
+
+  const renderTable=(users,containerId)=>{
+    const container=document.getElementById(containerId);
+    if(!users||users.length===0){
+      container.innerHTML='<div class="empty">No hay usuarios en esta categoría</div>';
+      return;
+    }
+    let html='<table><thead><tr><th>ID</th><th>Nombre</th><th>Email Institucional</th><th>Rol</th><th>Registrado</th></tr></thead><tbody>';
+    users.forEach(u=>{
+      const roleLabel={admin:'Administrador',teacher:'Docente',student:'Estudiante',guardian:'Tutor'}[u.role]||u.role;
+      html+=`<tr>
+        <td>${u.id}</td>
+        <td>${u.name}</td>
+        <td><code>${u.email}</code></td>
+        <td><span class="badge ${getBadgeClass(u.role)}">${roleLabel}</span></td>
+        <td>${new Date(u.created_at).toLocaleString('es-ES')}</td>
+      </tr>`;
+    });
+    html+='</tbody></table>';
+    container.innerHTML=html;
+  };
+
+  const loadUsers=async()=>{
+    try{
+      const res=await fetch(api.baseURL+'/users/all',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
+      if(!res.ok) throw new Error('Error al cargar');
+      const users=await res.json();
+      
+      renderTable(users,'list-todos');
+      renderTable(users.filter(u=>u.role==='admin'),'list-admin');
+      renderTable(users.filter(u=>u.role==='teacher'),'list-teacher');
+      renderTable(users.filter(u=>u.role==='student'),'list-student');
+      renderTable(users.filter(u=>u.role==='guardian'),'list-guardian');
+    }catch(err){
+      document.getElementById('list-todos').innerHTML='<div class="empty" style="color:#c0392b">⚠️ '+err.message+'</div>';
+    }
+  };
+
+  document.getElementById('refresh').addEventListener('click',loadUsers);
+  loadUsers();
+});
+</script>
+</body>
+</html>

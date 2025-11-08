@@ -41,21 +41,4 @@ document.addEventListener('DOMContentLoaded',()=>{
   attach(document.getElementById('form-alumno'), fd=>({
     name: fd.get('name'), password: fd.get('password'), telefono: fd.get('telefono')||null, fecha_nacimiento: fd.get('fecha_nacimiento')||null, direccion: fd.get('direccion')||null
   }), 'register', 'student');
-
-  // Mostrar lista de usuarios
-  const loadUsers=async()=>{
-    const list=document.getElementById('users-list');
-    try{
-      const res=await fetch(window.eduSyncAPI.baseURL+'/users/all',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
-      if(!res.ok) throw new Error('No se pudo cargar usuarios');
-      const users=await res.json();
-      if(!users || users.length===0){ list.innerHTML='<p style="color:#666;font-size:.85rem">No hay usuarios registrados.</p>'; return; }
-      let html='<table style="width:100%;border-collapse:collapse;font-size:.8rem"><thead><tr style="background:#033f4e;color:#fff"><th style="padding:8px;text-align:left">ID</th><th style="padding:8px;text-align:left">Nombre</th><th style="padding:8px;text-align:left">Email</th><th style="padding:8px;text-align:left">Rol</th><th style="padding:8px;text-align:left">Creado</th></tr></thead><tbody>';
-      users.forEach(u=>{ html+=`<tr style="border-bottom:1px solid #ddd"><td style="padding:8px">${u.id}</td><td style="padding:8px">${u.name}</td><td style="padding:8px"><code style="font-size:.75rem">${u.email}</code></td><td style="padding:8px"><span style="background:#e3f7ed;color:#0a7a3f;padding:3px 8px;border-radius:4px;font-size:.7rem;font-weight:600">${u.role}</span></td><td style="padding:8px;color:#666">${new Date(u.created_at).toLocaleDateString()}</td></tr>`; });
-      html+='</tbody></table>';
-      list.innerHTML=html;
-    }catch(err){ list.innerHTML='<p style="color:#c0392b;font-size:.85rem">Error: '+err.message+'</p>'; }
-  };
-  document.getElementById('refresh-users').addEventListener('click',loadUsers);
-  loadUsers();
 });

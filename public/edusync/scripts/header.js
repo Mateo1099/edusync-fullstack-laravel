@@ -12,7 +12,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     {href:'tareas.html',text:'Tareas',roles:['student']},
     {href:'calificaciones.html',text:'Calificaciones',roles:['student']},
     {href:'perfil.html',text:'Perfil',roles:['student','teacher','guardian','admin']},
-    {href:'manage-users.html',text:'Usuarios',roles:['admin']},
+    {href:'manage-users.html',text:'Crear Usuarios',roles:['admin']},
+    {href:'usuarios-registrados.html',text:'👥 Ver Usuarios',roles:['admin']},
   ];
   const role=(api.user&&api.user.role)||null;
   links.filter(l=>!role || l.roles.includes(role)).forEach(l=>{ const a=document.createElement('a'); a.href=l.href; a.textContent=l.text; nav.appendChild(a); });
