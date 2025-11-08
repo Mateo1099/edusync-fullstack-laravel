@@ -1,12 +1,506 @@
 # EduSync Fullstack Laravel
 
-Plataforma educativa fullstack: API Laravel + frontend estático en `public/edusync`.
+Sistema de gestión educativa completo con API REST y frontend integrado.
 
-## Tecnologías principales
-- **Laravel**: Framework PHP moderno y robusto.
-- **Eloquent ORM**: Mapeo objeto-relacional para modelos y relaciones.
-- **Sanctum**: Autenticación API segura.
-- **Middleware personalizado**: Control de acceso por roles.
+---
+
+## 📋 **¿Qué es este proyecto?**
+
+**EduSync** es una plataforma educativa que permite gestionar estudiantes, docentes, cursos, tareas, calificaciones y comunicación interna. Combina:
+- **Backend**: API REST construida con Laravel + Sanctum (autenticación por tokens).
+- **Frontend**: Aplicación web estática (HTML/CSS/JavaScript) servida desde `public/edusync`.
+- **Base de datos**: MySQL (nombre exacto: `edusync_db`).
+
+---
+
+## 🗄️ **BASE DE DATOS**
+
+### **Motor y nombre**
+- **Motor**: MySQL (compatible con MariaDB)
+- **Nombre de la base de datos**: `edusync_db`
+- **Puerto por defecto**: `3306`
+- **Usuario**: `root` (puedes cambiarlo en `.env`)
+- **Password**: `root` (ajusta según tu entorno)
+
+### **Cómo crear la base de datos**
+Abre MySQL Workbench o tu cliente MySQL y ejecuta:
+```sql
+CREATE DATABASE edusync_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Para pruebas automáticas (opcional):
+```sql
+CREATE DATABASE edusync_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### **Tablas principales**
+El proyecto usa migraciones de Laravel. Al ejecutar `php artisan migrate` se crean automáticamente:
+- `users` - Usuarios del sistema (con rol: admin, teacher, guardian, student)
+- `students` - Datos adicionales de estudiantes (matrícula, teléfono, etc.)
+- `teachers` - Datos de docentes
+- `guardians` - Tutores/padres
+- `courses` - Cursos ofrecidos
+- `enrollments` - Inscripciones de estudiantes a cursos
+- `assignments` - Tareas asignadas
+- `grades` - Calificaciones
+- `messages` - Mensajes internos (placeholder)
+- `events` - Eventos escolares
+- `schedules` - Horarios
+- `password_reset_tokens` - Tokens de recuperación de contraseña
+- `personal_access_tokens` - Tokens de autenticación Sanctum
+- Y tablas de sistema Laravel (cache, jobs, sessions, migrations)
+
+---
+
+## 🛠️ **STACK TECNOLÓGICO**
+
+### **Backend**
+| Componente | Tecnología | Versión |
+|-----------|-----------|---------|
+| Lenguaje | PHP | 8.2+ |
+| Framework | Laravel | 12.x |
+| Autenticación | Laravel Sanctum | 4.x |
+| ORM | Eloquent | (incluido en Laravel) |
+| Validación | Form Requests + Regex | nativo Laravel |
+| Base de datos | MySQL | 8.0+ (compatible 5.7+) |
+
+### **Frontend**
+| Componente | Tecnología | Notas |
+|-----------|-----------|-------|
+| Lenguaje | JavaScript (Vanilla) | Sin frameworks (React/Vue) |
+| Markup | HTML5 | Semántico y accesible |
+| Estilos | CSS3 | Variables CSS, sin preprocessadores |
+| Gestión de estado | localStorage | Para token de autenticación |
+| Cliente HTTP | Fetch API | Nativo del navegador |
+
+### **Infraestructura y DevOps**
+- **Servidor local**: `php artisan serve` (puerto 8000)
+- **Docker**: Nginx + PHP-FPM + MySQL (opcional, para portabilidad)
+- **CI/CD**: GitHub Actions (tests automáticos con MySQL)
+- **Despliegue**: Railway (recomendado para demos rápidas)
+
+---
+
+## 📁 **ESTRUCTURA DEL PROYECTO**
+
+```
+edusync-laravel/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/          # Lógica de endpoints API
+│   │   │   ├── AuthController.php          # Login, registro, logout
+│   │   │   ├── PasswordResetController.php # Recuperación de contraseña
+│   │   │   ├── CourseController.php        # CRUD cursos
+│   │   │   ├── AssignmentController.php    # CRUD tareas
+│   │   │   ├── GradeController.php         # CRUD calificaciones
+│   │   │   └── ...
+│   │   └── Middleware/
+│   │       ├── Authenticate.php  # Retorna 401 JSON (no redirect HTML)
+│   │       └── RoleMiddleware.php # Filtro por rol (admin, teacher, etc.)
+│   ├── Models/                   # Modelos Eloquent
+│   │   ├── User.php
+│   │   ├── Student.php
+│   │   ├── Teacher.php
+│   │   ├── Course.php
+│   │   └── ...
+│   └── Providers/
+│       └── RouteServiceProvider.php # Rate limiters (login, sensitive)
+├── database/
+│   ├── migrations/               # Esquema de tablas
+│   └── seeders/
+│       ├── DatabaseSeeder.php    # Orquestador de seeders
+│       └── AdminUserSeeder.php   # Crea admin@edusync.com por defecto
+├── public/
+│   ├── index.php                 # Entry point Laravel
+│   └── edusync/                  # Frontend estático
+│       ├── login.html            # Página de login
+│       ├── DashboardAdmin.html   # Panel de administrador
+│       ├── DashboardAlumno.html  # Panel de estudiante
+│       ├── DashboardDocente.html # Panel de docente
+│       ├── DashboardPadres.html  # Panel de tutores
+│       ├── cursos.html
+│       ├── tareas.html
+│       ├── calificaciones.html
+│       ├── perfil.html
+│       ├── manage-users.html     # Gestión de usuarios (admin)
+│       ├── scripts/
+│       │   ├── api-integration.js # Cliente API (fetch + token)
+│       │   └── header.js          # Header dinámico con navegación por rol
+│       └── styles/
+│           └── main.css           # Estilos unificados
+├── routes/
+│   ├── api.php                   # Definición de endpoints REST
+│   └── web.php                   # Rutas web (mayormente redirige a /edusync)
+├── tests/
+│   └── Feature/
+│       └── AuthAndRolesTest.php  # Tests de registro, login y roles
+├── .env                          # Variables de entorno (NO versionar)
+├── .env.example                  # Plantilla de variables
+├── .env.testing                  # Variables para tests
+├── composer.json                 # Dependencias PHP
+├── docker-compose.yml            # Stack Docker (opcional)
+└── README.md                     # Este archivo
+```
+
+---
+
+## 🚀 **INSTALACIÓN PASO A PASO (PC NUEVO)**
+
+### **Requisitos previos**
+- PHP 8.2 o superior ([descargar](https://windows.php.net/download))
+- Composer ([descargar](https://getcomposer.org/download/))
+- MySQL 8.0+ o MariaDB 10.3+ ([descargar](https://dev.mysql.com/downloads/installer/))
+- Git ([descargar](https://git-scm.com/downloads))
+
+### **Paso 1: Clonar el repositorio**
+```bash
+git clone https://github.com/Mateo1099/edusync-fullstack-laravel.git
+cd edusync-fullstack-laravel
+```
+
+### **Paso 2: Instalar dependencias PHP**
+```bash
+composer install
+```
+
+### **Paso 3: Configurar variables de entorno**
+```bash
+cp .env.example .env
+```
+
+Abre `.env` y verifica/ajusta estas líneas:
+```properties
+APP_NAME=EduSync
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=edusync_db
+DB_USERNAME=root
+DB_PASSWORD=root
+```
+
+### **Paso 4: Generar clave de aplicación**
+```bash
+php artisan key:generate
+```
+
+### **Paso 5: Crear la base de datos**
+Abre MySQL Workbench y ejecuta:
+```sql
+CREATE DATABASE edusync_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### **Paso 6: Ejecutar migraciones**
+```bash
+php artisan migrate
+```
+
+### **Paso 7: Crear usuario administrador inicial**
+```bash
+php artisan db:seed --class=AdminUserSeeder
+```
+
+Credenciales por defecto:
+- **Email**: `admin@edusync.com`
+- **Password**: `1025`
+
+### **Paso 8: Iniciar el servidor**
+```bash
+php artisan serve
+```
+
+### **Paso 9: Abrir el frontend**
+Abre tu navegador en: **http://localhost:8000/edusync/login.html**
+
+---
+
+## 🌐 **ENDPOINTS DE LA API**
+
+Base URL local: `http://localhost:8000/api`
+
+### **Autenticación**
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| POST | `/register` | Registra estudiante (genera email institucional) | No |
+| POST | `/login` | Login (devuelve token Sanctum) | No |
+| POST | `/logout` | Cierra sesión (revoca token) | Sí |
+| GET | `/user` | Obtiene usuario autenticado | Sí |
+
+### **Recuperación de contraseña**
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| POST | `/password/forgot` | Solicita enlace de reset | No |
+| POST | `/password/reset` | Cambia contraseña con token | No |
+
+### **Estudiantes (rol: student)**
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET | `/my/courses` | Mis cursos inscritos | Sí |
+| GET | `/my/assignments` | Mis tareas | Sí |
+| GET | `/my/grades` | Mis calificaciones | Sí |
+
+### **Docentes (rol: teacher)**
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET/POST/PUT/DELETE | `/courses` | CRUD de cursos | Sí |
+| GET/POST/PUT/DELETE | `/assignments` | CRUD de tareas | Sí |
+| GET/POST/PUT/DELETE | `/grades` | CRUD de calificaciones | Sí |
+
+### **Administradores (rol: admin)**
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET/POST/PUT/DELETE | `/teachers` | Gestión de docentes | Sí |
+| GET/POST/PUT/DELETE | `/guardians` | Gestión de tutores | Sí |
+| GET/POST/PUT/DELETE | `/courses` | Gestión de cursos | Sí |
+| GET/POST/PUT/DELETE | `/enrollments` | Gestión de inscripciones | Sí |
+
+### **Salud del sistema**
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET | `/health/openssl` | Verifica OpenSSL habilitado | No |
+
+**Nota**: Todos los endpoints protegidos requieren header:
+```
+Authorization: Bearer {token}
+```
+
+---
+
+## 🔐 **AUTENTICACIÓN Y SEGURIDAD**
+
+### **Flujo de autenticación**
+1. Usuario ingresa email y contraseña en `login.html`
+2. Frontend hace `POST /api/login` y recibe `{ token, user }`
+3. Token se guarda en `localStorage` bajo la clave `edusync_token`
+4. Cada petición incluye el header `Authorization: Bearer {token}`
+5. Al hacer logout, se llama `POST /api/logout` que revoca el token
+
+### **Roles del sistema**
+- **admin**: Acceso completo (gestión de usuarios, cursos, inscripciones)
+- **teacher**: Gestiona sus cursos, tareas y calificaciones
+- **guardian**: Consulta información de estudiantes bajo su tutela
+- **student**: Ve sus cursos, tareas y calificaciones
+
+### **Validación de contraseñas**
+Regex aplicado en registro:
+```regex
+^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\/\-+]).{8,}$
+```
+Requiere: mínimo 8 caracteres, mayúsculas, minúsculas, números y símbolos.
+
+### **Rate limiting**
+- Login: máximo 5 intentos por minuto por IP
+- Registro y password reset: máximo 10 por minuto (rate limiter `sensitive`)
+- API general: 60 peticiones por minuto
+
+---
+
+## 🧪 **TESTS**
+
+### **Ejecutar tests localmente**
+```bash
+php artisan test
+```
+
+### **Tests incluidos** (`tests/Feature/AuthAndRolesTest.php`)
+- Registro exitoso de estudiante con generación de email institucional
+- Login correcto y obtención de token
+- Denegación de acceso de estudiante a rutas de admin
+- Acceso permitido de admin a rutas protegidas
+
+### **CI/CD en GitHub Actions**
+El workflow `.github/workflows/ci.yml` ejecuta automáticamente:
+1. Levanta un servicio MySQL 8
+2. Instala dependencias con Composer
+3. Ejecuta migraciones
+4. Corre los tests Feature
+
+---
+
+## 🐳 **DOCKER (OPCIONAL)**
+
+### **Iniciar con Docker Compose**
+```bash
+docker-compose up -d
+docker-compose exec app composer install
+docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate --force
+docker-compose exec app php artisan db:seed --class=AdminUserSeeder
+```
+
+### **Acceso**
+- Frontend: http://localhost:8080/edusync/login.html
+- MySQL: localhost:3307 (mapeado desde contenedor)
+
+---
+
+## ☁️ **DESPLIEGUE EN RAILWAY**
+
+### **Pasos rápidos**
+1. Crea proyecto en Railway y conecta este repositorio
+2. Añade servicio MySQL desde Railway
+3. Configura variables de entorno:
+   ```
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_KEY={genera con php artisan key:generate --show}
+   APP_URL=https://tu-proyecto.up.railway.app
+   DB_CONNECTION=mysql
+   DB_HOST={Railway te lo provee}
+   DB_PORT=3306
+   DB_DATABASE=railway
+   DB_USERNAME={Railway te lo provee}
+   DB_PASSWORD={Railway te lo provee}
+   ```
+4. Build command: `composer install && php artisan migrate --force && php artisan db:seed --class=AdminUserSeeder --force`
+5. Start command: `php artisan serve --host=0.0.0.0 --port=${PORT}`
+
+---
+
+## 📝 **SCRIPTS COMPOSER ÚTILES**
+
+```bash
+composer dev              # Inicia servidor + queue + logs + vite
+composer test             # Ejecuta tests
+composer build:prod       # Cachea config, rutas y vistas (producción)
+composer build:clear      # Limpia caches
+```
+
+---
+
+## 🎨 **FRONTEND: ESTRUCTURA Y FUNCIONAMIENTO**
+
+### **Tecnologías**
+- **HTML5**: Estructura semántica
+- **CSS3**: Variables CSS en `main.css` (sin Sass/LESS)
+- **JavaScript**: Vanilla JS (sin jQuery, React o Vue)
+
+### **Cliente API** (`scripts/api-integration.js`)
+Expone funciones globales:
+```javascript
+API.login(email, password)          // Retorna { token, user }
+API.register(data)                  // Registra estudiante
+API.logout()                        // Cierra sesión
+API.getUser()                       // Usuario autenticado
+API.getCourses()                    // Lista de cursos
+// ... más métodos según endpoint
+```
+
+### **Header dinámico** (`scripts/header.js`)
+Se ejecuta automáticamente en cada página y:
+1. Lee el token de `localStorage`
+2. Obtiene datos del usuario con `API.getUser()`
+3. Renderiza menú de navegación según el rol
+4. Añade botón de logout funcional
+
+### **Páginas principales**
+- `login.html`: Formulario de login
+- `registro.html`: Formulario de registro (genera email institucional)
+- `DashboardAdmin.html`: Panel con estadísticas y gestión
+- `DashboardAlumno.html`: Mis cursos, tareas pendientes
+- `DashboardDocente.html`: Cursos que imparte, tareas a revisar
+- `DashboardPadres.html`: Info de estudiantes bajo tutela
+- `cursos.html`: Lista de cursos (filtrada por rol)
+- `tareas.html`: Lista de tareas (filtrada por inscripción)
+- `calificaciones.html`: Historial de calificaciones
+- `perfil.html`: Edición de datos personales
+- `manage-users.html`: Administración de usuarios (solo admin)
+
+---
+
+## 📦 **DEPENDENCIAS PRINCIPALES**
+
+### **Backend (composer.json)**
+```json
+{
+  "require": {
+    "php": "^8.2",
+    "laravel/framework": "^12.0",
+    "laravel/sanctum": "^4.2",
+    "laravel/tinker": "^2.10.1"
+  },
+  "require-dev": {
+    "fakerphp/faker": "^1.23",
+    "phpunit/phpunit": "^11.5.3",
+    "mockery/mockery": "^1.6"
+  }
+}
+```
+
+### **Frontend**
+Sin dependencias externas (todo nativo del navegador).
+
+---
+
+## 🔧 **COMANDOS ARTISAN ÚTILES**
+
+```bash
+php artisan migrate              # Ejecuta migraciones pendientes
+php artisan migrate:fresh        # Borra todo y recrea tablas (¡cuidado!)
+php artisan db:seed              # Ejecuta todos los seeders
+php artisan db:seed --class=AdminUserSeeder  # Ejecuta seeder específico
+php artisan route:list           # Lista todos los endpoints
+php artisan tinker               # Consola interactiva (útil para debug)
+php artisan serve                # Inicia servidor de desarrollo
+php artisan config:cache         # Cachea configuración (producción)
+php artisan route:cache          # Cachea rutas (producción)
+php artisan view:cache           # Cachea vistas (producción)
+```
+
+---
+
+## 📚 **DOCUMENTACIÓN ADICIONAL**
+
+- **Arquitectura del sistema**: `docs/arquitectura.md`
+- **Documentación de la API**: `docs/api.md`
+- **Guía de instalación extendida**: `docs/instalacion.md`
+- **Deploy en Railway**: `docs/railway-deployment.md`
+
+---
+
+## 🛣️ **ROADMAP Y MEJORAS FUTURAS**
+
+- [ ] Módulo de mensajería interna funcional
+- [ ] Notificaciones push (eventos, tareas nuevas)
+- [ ] Exportación de calificaciones a PDF/Excel
+- [ ] Sistema de asistencia con código QR
+- [ ] Dashboard con gráficos (Chart.js)
+- [ ] Soporte multiidioma (i18n)
+- [ ] App móvil (React Native o Flutter)
+- [ ] Videollamadas integradas (Jitsi/Zoom)
+
+---
+
+## 👥 **CONTRIBUCIÓN**
+
+1. Fork del repositorio
+2. Crea una rama: `git checkout -b feature/mi-mejora`
+3. Commit: `git commit -m "feat: descripción clara"`
+4. Push: `git push origin feature/mi-mejora`
+5. Abre un Pull Request con descripción detallada
+
+---
+
+## 📄 **LICENCIA**
+
+Este proyecto usa Laravel, que es open-source bajo licencia MIT.
+
+---
+
+## 📞 **SOPORTE**
+
+Si tienes dudas al instalar en otro PC:
+1. Verifica que PHP, Composer y MySQL estén instalados
+2. Revisa que la base de datos `edusync_db` exista
+3. Ejecuta `php artisan migrate` para crear las tablas
+4. Corre `php artisan db:seed` para crear el admin inicial
+5. Si el servidor no inicia en 8000, prueba con `php artisan serve --port=8001`
+
+---
+
+**Desarrollado con ❤️ para EduSync - Sistema de Gestión Educativa**
 
 ## Estructura del proyecto
 - `app/Models`: Modelos Eloquent para cada entidad principal.
