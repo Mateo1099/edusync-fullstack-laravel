@@ -9,20 +9,31 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: edusync_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v4
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, sqlite3, pdo_sqlite
+          extensions: mbstring, pdo_mysql
           coverage: none
+      - name: Copy testing env
+        run: cp .env.testing .env
       - name: Install dependencies
-        run: |
-          composer install --no-interaction --prefer-dist
-      - name: Run tests
-        env:
-          APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+        run: composer install --no-interaction --prefer-dist
+      - name: Generate key & run migrations
         run: |
           php artisan key:generate --force
-          php artisan test --testsuite=Feature
+          php artisan migrate --force
+      - name: Run Feature tests
+        run: php artisan test --testsuite=Feature

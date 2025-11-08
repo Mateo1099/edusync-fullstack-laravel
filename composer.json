@@ -45,7 +45,6 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi",
-            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
         ],
         "dev": [
@@ -55,6 +54,16 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "build:prod": [
+            "@php artisan config:cache",
+            "@php artisan route:cache",
+            "@php artisan view:cache"
+        ],
+        "build:clear": [
+            "@php artisan config:clear",
+            "@php artisan route:clear",
+            "@php artisan view:clear"
         ]
     },
     "extra": {

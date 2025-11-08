@@ -29,3 +29,6 @@ Thumbs.db
 # Ruido de Windows
 **/desktop.ini
 **/Desktop.ini
+
+# Evitar SQLite local accidental
+database/database.sqlite

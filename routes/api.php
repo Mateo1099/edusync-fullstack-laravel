@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthController;
 // AUTENTICACIÓN (Sanctum)
 // -----------------------------
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:sensitive');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -50,6 +50,12 @@ Route::middleware(['auth:sanctum', 'role:student'])->group(function () {
     Route::get('my/grades', [App\Http\Controllers\GradeController::class, 'index']);
     Route::get('my/courses', [App\Http\Controllers\CourseController::class, 'myCourses']);
 });
+
+// Recuperación de contraseña (API-friendly, usa mailer "log" por defecto)
+Route::post('/password/forgot', [\App\Http\Controllers\PasswordResetController::class, 'requestReset'])
+    ->middleware('throttle:sensitive');
+Route::post('/password/reset', [\App\Http\Controllers\PasswordResetController::class, 'reset'])
+    ->middleware('throttle:sensitive');
 
 // Puedes agregar rutas personalizadas aquí para funcionalidades extra
 // Ejemplo: Route::get('courses/{id}/students', [CourseController::class, 'students']);
