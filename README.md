@@ -1,6 +1,6 @@
-# EduSync Laravel
+# EduSync Fullstack Laravel
 
-Sistema de gestión educativa migrado a Laravel, con arquitectura profesional y escalable.
+Plataforma educativa fullstack: API Laravel + frontend estático en `public/edusync`.
 
 ## Tecnologías principales
 - **Laravel**: Framework PHP moderno y robusto.
@@ -15,12 +15,30 @@ Sistema de gestión educativa migrado a Laravel, con arquitectura profesional y 
 - `database/migrations`: Migraciones con comentarios y claves foráneas.
 - `routes/api.php`: Endpoints RESTful protegidos por autenticación y roles.
 
-## Guía de uso
-1. Instala dependencias:
-   ```bash
-   # EduSync Fullstack Laravel
+## Puertos por defecto (muy importante)
+- Desarrollo con Laravel: `php artisan serve` expone en `http://127.0.0.1:8000` (puerto 8000).
+- Frontend: accede en `http://127.0.0.1:8000/edusync/login.html`.
+- Docker: Nginx publica en `http://127.0.0.1:8080` (map `8080:80`).
+- Railway: usa un puerto dinámico `${PORT}` que la plataforma inyecta; la URL final la verás en el panel.
 
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+## Instalación y uso rápido en un PC nuevo
+1) Requisitos: PHP 8.2+, Composer, MySQL (o Docker si prefieres contenedores).
+2) Clona el repo y prepara el backend:
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+3) Configura `.env` con tu MySQL (ver bloque “Variables de entorno”).
+4) Migra la base de datos:
+```bash
+php artisan migrate
+```
+5) Inicia el servidor:
+```bash
+php artisan serve
+```
+6) Abre el frontend: http://127.0.0.1:8000/edusync/login.html
 
    ## Tabla rápida
    | Componente | Descripción |
@@ -172,13 +190,14 @@ Sistema de gestión educativa migrado a Laravel, con arquitectura profesional y 
    volumes:
       dbdata:
    ```
-   Luego:
+   Luego (primera vez):
    ```bash
    docker compose up -d
    docker compose exec app composer install
    docker compose exec app php artisan key:generate
    docker compose exec app php artisan migrate --force
    ```
+   Accede a: http://127.0.0.1:8080/edusync/login.html
 
    ### ¿Cuál elegir?
    - Railway: más rápido para mostrar avances, provisioning automático.
@@ -196,10 +215,13 @@ Sistema de gestión educativa migrado a Laravel, con arquitectura profesional y 
    - Añadir pruebas automáticas descritas arriba.
    - Cachear resultados de métricas (cursos activos) con `cache()`.
    - Comando `php artisan edusync:seed-minimal` para crear roles y admin inicial.
-   - Eliminar archivos `desktop.ini` de control de Windows del repo.
+   - Eliminar archivos `desktop.ini` de control de Windows del repo (ya agregados al .gitignore).
    - Añadir CI (GitHub Actions) para `composer install && php artisan test`.
    - Endpoint de recuperación de contraseña (flujo token + correo temporal).
    - Rate limit a `/api/login` (Throttle middleware).
+
+   ## CI
+   Este repositorio incluye un workflow de GitHub Actions (`.github/workflows/ci.yml`) que ejecuta las pruebas Feature en cada push a `main` usando SQLite en memoria.
 
    ## Cómo contribuir
    Clonar, crear rama `feature/mi-cambio`, enviar PR con descripción clara. Mantener estilo de validaciones consistente y evitar lógica pesada en controladores (mover a servicios si crece).

@@ -25,3 +25,7 @@ Thumbs.db
 
 # Evitar confusión con el frontend legacy que vive fuera de este repo en la misma workspace
 ../EDUSYNC/
+
+# Ruido de Windows
+**/desktop.ini
+**/Desktop.ini
