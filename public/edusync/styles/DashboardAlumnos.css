@@ -1,0 +1,26 @@
+/* Dashboard alumno (migrado resumido) */
+body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#f4f6f8;color:#222}
+.sidebar{position:fixed;left:0;top:0;width:220px;height:100vh;background:#2e3b55;color:#fff;padding-top:20px}
+.sidebar-header{text-align:center;margin-bottom:30px}
+.sidebar nav ul{list-style:none;padding:0}
+.sidebar nav ul li{margin:20px 0}
+.sidebar nav ul li a{color:#fff;text-decoration:none;padding:10px 30px;display:block;border-radius:4px;transition:background .2s}
+.sidebar nav ul li.active a,.sidebar nav ul li a:hover{background:#405080}
+.main-content{margin-left:240px;padding:30px 40px}
+.Dashboard-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.profile-pic{width:60px;height:60px;border-radius:50%;border:3px solid #2e3b55}
+.quick-stats{display:flex;gap:30px;margin-bottom:40px}
+.stat-card{background:#fff;padding:25px 35px;border-radius:10px;box-shadow:0 2px 8px rgba(44,62,80,.08);text-align:center;flex:1}
+.stat-card h3{margin:0 0 10px;color:#405080}
+.stat-card p{font-size:2.2em;margin:0;font-weight:bold}
+.courses-section,.tasks-section{margin-bottom:40px}
+.courses-list{display:flex;gap:20px;flex-wrap:wrap}
+.course-card{background:#fff;border-radius:8px;box-shadow:0 1px 6px rgba(44,62,80,.07);padding:20px;width:220px;margin-bottom:20px}
+.course-card h4{margin:0 0 8px;color:#2e3b55}
+.tasks-table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 6px rgba(44,62,80,.07)}
+.tasks-table th,.tasks-table td{padding:14px 12px;text-align:left}
+.tasks-table th{background:#2e3b55;color:#fff}
+.tasks-table tr:nth-child(even){background:#f4f6f8}
+.status-pending{color:#e67e22;font-weight:bold}
+.status-completed{color:#27ae60;font-weight:bold}
+@media (max-width:900px){.main-content{margin-left:0;padding:20px 10px}.sidebar{position:static;width:100%;height:auto;display:flex;flex-direction:row;align-items:center;justify-content:space-between}.sidebar nav ul{display:flex;gap:10px}.quick-stats{flex-direction:column;gap:15px}.courses-list{flex-direction:column;gap:10px}}

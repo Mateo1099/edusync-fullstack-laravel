@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión - EduSync</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+  <main>
+    <div class="login-container">
+      <img src="images/logo.svg" alt="Logo EduSync" class="login-logo" onerror="this.style.display='none'">
+      <h1>Iniciar Sesión</h1>
+      <form id="login-form">
+        <div id="login-feedback" style="margin-bottom:8px;font-size:13px;color:#dc3545;display:none"></div>
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" name="email" placeholder="Ingresa tu correo institucional" required>
+        </div>
+        <div class="form-group password-toggle">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+          <span class="toggle-password"><i class="fa fa-eye"></i></span>
+        </div>
+        <button type="submit" class="login-button">Ingresar</button>
+        <div style="margin-top:10px;font-size:12px;color:#555">
+          <strong>Nota:</strong> Back-end activo en <code>http://127.0.0.1:8000</code>.
+        </div>
+      </form>
+      <div class="login-links">
+        <a href="recuperar.html" id="forgot-password">¿Olvidaste tu contraseña?</a>
+        <a href="registro.html" id="register">Regístrate</a>
+      </div>
+    </div>
+  </main>
+  <script src="scripts/api-integration.js"></script>
+  <script src="scripts/login.js"></script>
+</body>
+</html>

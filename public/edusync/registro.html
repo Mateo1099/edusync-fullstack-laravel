@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro - EduSync</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+  <form id="registro-form" method="POST">
+    <h2>Registro Estudiante</h2>
+    <div class="form-group">
+      <label for="nombre">Nombre Completo</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required>
+    </div>
+    <div class="form-group">
+      <label for="correo-personal">Correo Personal (opcional)</label>
+      <input type="email" id="correo-personal" name="correo-personal" placeholder="tuemail@ejemplo.com">
+      <small>Se enviará tu correo institucional y confirmación.</small>
+    </div>
+    <div class="form-group password-toggle">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" placeholder="Crea una contraseña" required>
+      <span class="toggle-password"><i class="fa fa-eye"></i></span>
+    </div>
+    <div class="grid-container">
+      <div class="form-group grid-item">
+        <label for="telefono">Teléfono</label>
+        <input type="tel" id="telefono" name="telefono" placeholder="Solo números" required>
+      </div>
+      <div class="form-group grid-item">
+        <label for="fecha-nacimiento">Fecha de Nacimiento</label>
+        <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required>
+      </div>
+      <div class="form-group grid-item">
+        <label for="genero">Género</label>
+        <select id="genero" name="genero" required>
+          <option value="">Selecciona</option>
+          <option value="masculino">Masculino</option>
+          <option value="femenino">Femenino</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-group grid-item">
+        <label for="pais">País</label>
+        <select id="pais" name="pais" required>
+          <option value="">Selecciona</option>
+          <option value="mexico">México</option>
+          <option value="colombia">Colombia</option>
+          <option value="argentina">Argentina</option>
+          <option value="españa">España</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group wide">
+      <label for="direccion">Dirección</label>
+      <textarea id="direccion" name="direccion" rows="4" placeholder="Ingresa tu dirección"></textarea>
+    </div>
+    <div class="form-group form-terminos">
+      <input type="checkbox" id="terminos" name="terminos" required>
+      <label for="terminos" class="label-terminos">Acepto los términos y condiciones</label>
+    </div>
+    <button type="submit">Registrarse</button>
+  </form>
+  <script src="scripts/api-integration.js"></script>
+  <script src="scripts/formularioderegistro.js"></script>
+</body>
+</html>

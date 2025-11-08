@@ -1,0 +1,71 @@
+/* Estilos compartidos globales + header reutilizable */
+:root{--c-primary:#05a9c9;--c-secondary:#06c4a8;--c-text:#033f4e;--c-muted:#05596c}
+html,body{height:100%}
+body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;min-height:100vh;background:radial-gradient(circle at 20% 20%,#0c97b8,#057c94,#026e85);}
+
+/* Header */
+.eds-header{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#ffffff10;color:#fff;padding:10px 16px;border-bottom:1px solid #ffffff30;backdrop-filter:blur(4px)}
+.eds-brand{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:.3px}
+.eds-brand img{width:28px;height:28px}
+.eds-nav{display:flex;flex-wrap:wrap;gap:10px}
+.eds-nav a{color:#e9ffff;text-decoration:none;font-weight:600;font-size:.85rem;padding:6px 10px;border-radius:8px}
+.eds-nav a:hover{background:#ffffff25}
+.eds-logout{background:linear-gradient(90deg,var(--c-primary),var(--c-secondary));color:#fff;border:none;padding:6px 12px;border-radius:10px;font-weight:700;cursor:pointer}
+.eds-logout:hover{filter:brightness(1.08)}
+
+/* Utilidades */
+.eds-container{width:100%;max-width:1100px;margin:0 auto;padding:20px}
+.eds-card{background:#ffffffeb;border-radius:16px;box-shadow:0 8px 30px -10px rgba(0,0,0,.30);padding:18px 22px}
+.eds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.eds-muted{color:#dff}
+/* ---- Incorporación de estilos específicos (login, registro, dashboard alumno) para unificación ---- */
+/* Login */
+.login-container{width:360px;background:#ffffffeb;backdrop-filter:blur(4px);padding:2.2rem 2.4rem 2.6rem;border-radius:1.2rem;box-shadow:0 12px 40px -8px rgba(0,0,0,.25);position:relative;animation:fadeIn .6s ease;}
+.login-logo{width:140px;display:block;margin:0 auto 12px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));}
+.login-container h1{font-size:1.5rem;margin:0 0 1.2rem;font-weight:600;text-align:center;color:var(--c-text);}
+.form-group{display:flex;flex-direction:column;margin-bottom:14px;}
+.form-group label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#05596c;margin-bottom:6px;}
+.form-group input{border:1px solid #b0c7ce;padding:.65rem .75rem;border-radius:.55rem;font-size:.9rem;background:#f7fbfc;transition:.25s;}
+.form-group input:focus{outline:none;border-color:#0396b7;box-shadow:0 0 0 3px rgba(3,150,183,.15);}
+.password-toggle{position:relative;}
+.toggle-password{position:absolute;right:12px;top:36px;cursor:pointer;color:#067e9d;font-size:.85rem;}
+.toggle-password:hover{color:#05596c;}
+.login-button{width:100%;background:linear-gradient(90deg,var(--c-primary),var(--c-secondary));border:none;color:#fff;font-weight:600;padding:.85rem 1rem;border-radius:.7rem;font-size:.95rem;cursor:pointer;letter-spacing:.5px;transition:.3s;}
+.login-button:hover{filter:brightness(1.08);box-shadow:0 6px 18px -6px rgba(5,169,201,.45);}
+.login-links{margin-top:18px;display:flex;justify-content:space-between;font-size:.75rem;}
+.login-links a{color:#056d84;text-decoration:none;font-weight:600;}
+.login-links a:hover{text-decoration:underline;color:#044e60;}
+#login-feedback{background:#ffe8e6;padding:6px 10px;border:1px solid #ffb3ad;border-radius:.5rem;color:#c0392b;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* Registro */
+#registro-form{background:#fff;color:#333;border-radius:10px;padding:20px;max-width:600px;width:100%;display:grid;gap:10px;}
+#registro-form h2{margin:0 0 10px;color:#4CAF50;text-align:center;}
+#registro-form .form-group label{font-weight:bold;font-size:.9em;text-transform:none;letter-spacing:0;color:#05596c}
+#registro-form .form-group input,#registro-form select,#registro-form textarea{width:100%;padding:8px;border:1px solid #ccc;border-radius:5px;font-size:14px;}
+.password-hints{font-size:12px;color:#6c757d;margin-top:6px}
+.password-hints li{list-style:disc;margin-left:18px}
+.hint-ok{color:#198754}.hint-bad{color:#dc3545}
+#registro-form button[type=submit]{background:linear-gradient(135deg,#81D4FA,#A5D6A7);border:none;color:#fff;padding:10px 15px;border-radius:5px;font-weight:bold;cursor:pointer}
+#registro-form button[type=submit]:hover{background:linear-gradient(135deg,#2196F3,#4CAF50)}
+.error-message{color:red;font-size:.75em;margin-top:3px}
+.error{border-color:red}
+.form-terminos{display:flex;align-items:center;gap:10px;margin-top:4px}
+.form-terminos input[type="checkbox"]{width:18px;height:18px}
+
+/* Dashboard Alumno (simplificado adaptable) */
+.dash-stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.dash-stat{background:#ffffffeb;border-radius:14px;padding:16px 18px;flex:1;min-width:200px;box-shadow:0 6px 24px -8px rgba(0,0,0,.18);text-align:center}
+.dash-stat h3{margin:0 0 6px;font-size:.85rem;color:#05596c;text-transform:uppercase;letter-spacing:.5px}
+.dash-stat p{margin:0;font-size:1.8rem;font-weight:700;color:var(--c-text)}
+.dash-section{margin-bottom:24px}
+.dash-grid{display:flex;flex-wrap:wrap;gap:14px}
+.dash-course{background:#fff;border:1px solid #d2e6ea;border-radius:12px;padding:12px 14px;flex:0 0 240px;box-shadow:0 4px 16px -6px rgba(0,0,0,.15)}
+.dash-course h4{margin:0 0 6px;color:var(--c-text);font-size:.95rem}
+.dash-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px -6px rgba(0,0,0,.15)}
+.dash-table th,.dash-table td{padding:10px 12px;font-size:.75rem}
+.dash-table th{background:#033f4e;color:#fff;text-align:left}
+.dash-table tr:nth-child(even){background:#f4f6f8}
+.status-pending{color:#e67e22;font-weight:600}
+.status-completed{color:#27ae60;font-weight:600}
+@media (max-width:700px){.dash-stats{flex-direction:column}.dash-course{flex:1 1 100%}}

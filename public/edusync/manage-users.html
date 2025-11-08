@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Administrar Usuarios - EduSync</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="scripts/api-integration.js"></script>
+  <script src="scripts/header.js"></script>
+  <style>
+    body{align-items:flex-start;}
+    .wrap{width:100%;max-width:1100px;margin:0 auto;padding:20px}
+    h1{color:#fff;margin:18px 0 14px;font-size:1.8rem;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;}
+    .card{background:#ffffffef;padding:18px 20px;border-radius:16px;box-shadow:0 6px 24px -6px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:12px;}
+    .card h2{margin:0;font-size:1.1rem;color:#033f4e}
+    label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#05596c}
+    input,textarea{border:1px solid #b0c7ce;border-radius:.55rem;padding:.55rem .7rem;font-size:.85rem;background:#f7fbfc}
+    input:focus,textarea:focus{outline:none;border-color:#0396b7;box-shadow:0 0 0 3px rgba(3,150,183,.15)}
+    button{background:linear-gradient(90deg,#05a9c9,#06c4a8);color:#fff;border:none;padding:.7rem 1rem;border-radius:.7rem;font-weight:600;font-size:.85rem;cursor:pointer;}
+    button:hover{filter:brightness(1.08)}
+    .status{font-size:.7rem;color:#444}
+    .msg{font-size:.7rem;padding:6px 8px;border-radius:6px;display:none}
+    .msg.ok{background:#e3f7ed;color:#0a7a3f;border:1px solid #9ed6b3}
+    .msg.err{background:#ffe8e6;color:#c0392b;border:1px solid #ffb3ad}
+    /* nav eliminado: se usa header.js */
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Gestión de Usuarios</h1>
+  <div id="admin-check" class="msg err" style="display:none"></div>
+  <div class="grid">
+    <form id="form-docente" class="card">
+      <h2>Crear Docente</h2>
+      <div class="msg" id="msg-docente"></div>
+      <label>Nombre</label>
+      <input name="name" required>
+      <label>Contraseña</label>
+      <input name="password" type="password" required placeholder="Fuerte (Aa1@)">
+      <label>Especialidad</label>
+      <input name="especialidad" placeholder="Ej: Matemáticas">
+      <label>Teléfono</label>
+      <input name="telefono">
+      <label>Bio</label>
+      <textarea name="bio" rows="3"></textarea>
+      <button>Crear Docente</button>
+      <small class="status">Email institucional se genera automáticamente.</small>
+    </form>
+    <form id="form-tutor" class="card">
+      <h2>Crear Padre/Tutor</h2>
+      <div class="msg" id="msg-tutor"></div>
+      <label>Nombre</label>
+      <input name="name" required>
+      <label>Contraseña</label>
+      <input name="password" type="password" required placeholder="Fuerte (Aa1@)">
+      <button>Crear Tutor</button>
+      <small class="status">Email institucional se genera automáticamente.</small>
+    </form>
+    <form id="form-alumno" class="card">
+      <h2>Crear Alumno</h2>
+      <div class="msg" id="msg-alumno"></div>
+      <label>Nombre</label>
+      <input name="name" required>
+      <label>Contraseña</label>
+      <input name="password" type="password" required placeholder="Fuerte (Aa1@)">
+      <label>Teléfono</label>
+      <input name="telefono">
+      <label>Fecha Nacimiento</label>
+      <input name="fecha_nacimiento" type="date">
+      <label>Dirección</label>
+      <textarea name="direccion" rows="2"></textarea>
+      <button>Crear Alumno</button>
+      <small class="status">Se genera matrícula y email institucional.</small>
+    </form>
+  </div>
+</div>
+<script src="scripts/manage-users.js"></script>
+</body>
+</html>

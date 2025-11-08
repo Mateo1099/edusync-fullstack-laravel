@@ -1,0 +1,21 @@
+/* Estilos específicos login mejorados */
+body{font-family:'Poppins',sans-serif;margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(circle at 20% 20%,#0c97b8,#057c94,#026e85);} 
+main{width:100%;display:flex;justify-content:center;padding:20px;}
+.login-container{width:360px;background:#ffffffeb;backdrop-filter:blur(4px);padding:2.2rem 2.4rem 2.6rem;border-radius:1.2rem;box-shadow:0 12px 40px -8px rgba(0,0,0,.25);position:relative;animation:fadeIn .6s ease;}
+.login-logo{width:140px;display:block;margin:0 auto 12px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));}
+h1{font-size:1.5rem;margin:0 0 1.2rem;font-weight:600;text-align:center;color:#033f4e;}
+.form-group{display:flex;flex-direction:column;margin-bottom:14px;}
+.form-group label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#05596c;margin-bottom:6px;}
+.form-group input{border:1px solid #cfd8dc;padding:.65rem .75rem;border-radius:.55rem;font-size:.9rem;background:#f7fbfc;transition:.25s;border:1px solid #b0c7ce;}
+.form-group input:focus{outline:none;border-color:#0396b7;box-shadow:0 0 0 3px rgba(3,150,183,.15);}
+.password-toggle{position:relative;}
+.toggle-password{position:absolute;right:12px;top:36px;cursor:pointer;color:#067e9d;font-size:.85rem;}
+.toggle-password:hover{color:#05596c;}
+.login-button{width:100%;background:linear-gradient(90deg,#05a9c9,#06c4a8);border:none;color:#fff;font-weight:600;padding:.85rem 1rem;border-radius:.7rem;font-size:.95rem;cursor:pointer;letter-spacing:.5px;transition:.3s;}
+.login-button:hover{filter:brightness(1.08);box-shadow:0 6px 18px -6px rgba(5,169,201,.45);}
+.login-links{margin-top:18px;display:flex;justify-content:space-between;font-size:.75rem;}
+.login-links a{color:#056d84;text-decoration:none;font-weight:600;}
+.login-links a:hover{text-decoration:underline;color:#044e60;}
+#login-feedback{background:#ffe8e6;padding:6px 10px;border:1px solid #ffb3ad;border-radius:.5rem;color:#c0392b;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+@media (max-width:420px){.login-container{width:92%;padding:1.8rem 1.6rem 2.2rem;}h1{font-size:1.35rem} }
