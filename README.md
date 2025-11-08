@@ -451,6 +451,190 @@ php artisan view:cache           # Cachea vistas (producción)
 
 ---
 
+## 💾 **¿QUÉ PASA CUANDO CAMBIO DE PC?**
+
+### **Tu base de datos y proyecto seguirán funcionando. Aquí está TODO LO QUE NECESITAS SABER:**
+
+### **🌐 OPCIÓN 1: Datos en Railway (RECOMENDADO para producción)**
+
+**¿Dónde están tus datos ahora?**
+- Tu aplicación está desplegada en: `https://web-production-3d11.up.railway.app`
+- Tu base de datos MySQL está en los **servidores de Railway** (nube)
+- **Los datos NO están en tu PC actual**, están en internet
+
+**Cuando tengas tu PC nuevo:**
+1. ✅ **Tu aplicación seguirá funcionando** - La URL pública no cambia
+2. ✅ **Todos los usuarios, cursos, tareas siguen ahí** - Están en la base de datos de Railway
+3. ✅ **Puedes acceder desde cualquier PC/celular** - Solo necesitas el link
+
+**Para trabajar en el código desde tu PC nuevo:**
+```bash
+# 1. Instalar requisitos (PHP, Composer, Git, MySQL opcional)
+# 2. Clonar el repositorio
+git clone https://github.com/Mateo1099/edusync-fullstack-laravel.git
+cd edusync-fullstack-laravel
+
+# 3. Instalar dependencias
+composer install
+
+# 4. Configurar .env (para desarrollo local)
+cp .env.example .env
+# Edita .env con tus credenciales locales O apunta a Railway
+
+# 5. Generar key
+php artisan key:generate
+
+# 6. Opcional: Base de datos local para desarrollo
+php artisan migrate
+php artisan db:seed
+
+# 7. Iniciar servidor local
+php artisan serve
+```
+
+**IMPORTANTE**: 
+- Los datos de **producción** (Railway) son independientes de tu PC
+- Puedes tener una BD local para desarrollo y otra en Railway para producción
+- Cualquier cambio que hagas en Railway se refleja en la URL pública
+
+---
+
+### **🖥️ OPCIÓN 2: Base de datos local (solo desarrollo)**
+
+Si estás trabajando **localmente** (http://localhost:8000):
+
+**En tu PC actual:**
+- Base de datos: MySQL local en `127.0.0.1:3306`
+- Nombre: `edusync_db`
+- Datos: **Solo en este PC**
+
+**Cuando cambies de PC:**
+
+#### **Método A: Exportar e importar la base de datos**
+
+**Paso 1: En tu PC actual, exporta la BD:**
+```bash
+# Windows (PowerShell)
+cd "C:\Program Files\MySQL\MySQL Server 8.0\bin"
+.\mysqldump.exe -u root -p edusync_db > C:\backup_edusync.sql
+```
+
+**Paso 2: Copia el archivo `backup_edusync.sql` a tu PC nuevo** (USB, correo, OneDrive, etc.)
+
+**Paso 3: En tu PC nuevo, importa la BD:**
+```bash
+# Primero crea la base de datos vacía
+mysql -u root -p
+CREATE DATABASE edusync_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
+
+# Luego importa los datos
+mysql -u root -p edusync_db < C:\ruta\backup_edusync.sql
+```
+
+#### **Método B: Usar Railway como BD principal (recomendado)**
+
+En tu PC nuevo, configura `.env` para apuntar a Railway:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST={el-host-de-railway-mysql}
+DB_PORT=3306
+DB_DATABASE={el-nombre-bd-railway}
+DB_USERNAME={usuario-railway}
+DB_PASSWORD={password-railway}
+```
+
+**Ventajas:**
+- ✅ No necesitas exportar/importar
+- ✅ Siempre tienes los datos más recientes
+- ✅ Funciona desde cualquier PC
+
+**Dónde encontrar las credenciales de Railway:**
+1. Ve a Railway → tu proyecto → servicio **MySQL**
+2. Pestaña **"Variables"**
+3. Copia los valores de:
+   - `MYSQLHOST`
+   - `MYSQLPORT`
+   - `MYSQLDATABASE`
+   - `MYSQLUSER`
+   - `MYSQLPASSWORD`
+
+---
+
+### **📋 CHECKLIST: Cambio de PC**
+
+**Antes de cambiar de PC:**
+- [ ] Hacer backup de tu base de datos local (si la usas)
+- [ ] Verificar que Railway esté funcionando
+- [ ] Anotar credenciales de Railway (por si acaso)
+- [ ] Hacer commit y push de cualquier cambio pendiente
+
+**En tu PC nuevo:**
+- [ ] Instalar PHP 8.2+, Composer, Git
+- [ ] Instalar MySQL (opcional si usas Railway)
+- [ ] Clonar el repositorio de GitHub
+- [ ] `composer install`
+- [ ] Configurar `.env`
+- [ ] `php artisan key:generate`
+- [ ] Elegir: ¿BD local o Railway?
+  - Local: `php artisan migrate && php artisan db:seed`
+  - Railway: Usar credenciales de Railway en `.env`
+- [ ] `php artisan serve`
+- [ ] Abrir http://localhost:8000/edusync/login.html
+
+---
+
+### **🔒 SEGURIDAD DE TUS DATOS**
+
+**¿Se perderán mis datos?**
+- ❌ NO si están en Railway
+- ⚠️ SÍ si solo están en MySQL local de tu PC actual y no haces backup
+
+**Recomendación:**
+- Usa Railway para producción (datos seguros en la nube)
+- Usa MySQL local solo para desarrollo/pruebas
+- Haz backups periódicos con `mysqldump`
+
+---
+
+### **🆘 SI ALGO FALLA EN TU PC NUEVO**
+
+**Error: "SQLSTATE[HY000] [2002] Connection refused"**
+```bash
+# Verifica que MySQL esté corriendo
+# Windows: Servicios → MySQL80 → Iniciar
+
+# O usa Railway:
+# Cambia DB_HOST en .env al host de Railway
+```
+
+**Error: "Class 'App\...' not found"**
+```bash
+composer dump-autoload
+```
+
+**Error: "No application encryption key"**
+```bash
+php artisan key:generate
+```
+
+**¿Olvidaste tus credenciales de Railway?**
+- Ve a Railway.app → Login con GitHub
+- Proyecto → MySQL → Variables
+
+---
+
+### **💡 MEJORES PRÁCTICAS**
+
+1. **Usa Railway para producción** - Datos siempre disponibles
+2. **Usa BD local para desarrollo** - No afectas producción
+3. **Haz backups semanales** si usas BD local importante
+4. **Versiona todo en GitHub** - Código siempre seguro
+5. **Documenta cambios** - Commits claros
+
+---
+
 ## 📚 **DOCUMENTACIÓN ADICIONAL**
 
 - **Arquitectura del sistema**: `docs/arquitectura.md`

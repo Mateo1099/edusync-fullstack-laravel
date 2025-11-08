@@ -26,6 +26,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('guardians', App\Http\Controllers\GuardianController::class)->only(['index','store','show','update','destroy']);
     Route::apiResource('courses', App\Http\Controllers\CourseController::class)->only(['index','store','show','update','destroy']);
     Route::apiResource('enrollments', App\Http\Controllers\EnrollmentController::class)->only(['index','store','show','update','destroy']);
+    // Listar todos los usuarios
+    Route::get('users/all', function() {
+        return response()->json(\App\Models\User::orderBy('created_at','desc')->get());
+    });
 });
 
 Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
