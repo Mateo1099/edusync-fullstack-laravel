@@ -28,9 +28,19 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('enrollments', App\Http\Controllers\EnrollmentController::class)->only(['index','store','show','update','destroy']);
 });
 
-// Listar todos los usuarios (solo admin)
+// Gestión de usuarios (solo admin)
 Route::get('/users/all', function() {
     return response()->json(\App\Models\User::orderBy('created_at','desc')->get());
+})->middleware(['auth:sanctum', 'role:admin']);
+
+Route::delete('/users/{id}', function($id) {
+    $user = \App\Models\User::findOrFail($id);
+    // Prevenir eliminar al propio admin logueado
+    if($user->id === auth()->id()) {
+        return response()->json(['error'=>'No puedes eliminar tu propia cuenta'],403);
+    }
+    $user->delete();
+    return response()->json(['success'=>true,'message'=>'Usuario eliminado']);
 })->middleware(['auth:sanctum', 'role:admin']);
 
 Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {

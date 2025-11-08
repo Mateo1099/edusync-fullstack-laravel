@@ -10,6 +10,13 @@ body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-se
 .eds-nav{display:flex;flex-wrap:wrap;gap:10px}
 .eds-nav a{color:#e9ffff;text-decoration:none;font-weight:600;font-size:.85rem;padding:6px 10px;border-radius:8px}
 .eds-nav a:hover{background:#ffffff25}
+.eds-dropdown{position:relative}
+.eds-dropdown-btn{background:transparent;color:#e9ffff;border:none;font-weight:600;font-size:.85rem;padding:6px 10px;border-radius:8px;cursor:pointer}
+.eds-dropdown-btn:hover{background:#ffffff25}
+.eds-dropdown-menu{display:none;position:absolute;top:100%;left:0;background:#fff;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:160px;z-index:100}
+.eds-dropdown:hover .eds-dropdown-menu{display:block}
+.eds-dropdown-menu a{display:block;color:#033f4e;padding:10px 14px;text-decoration:none;font-size:.85rem}
+.eds-dropdown-menu a:hover{background:#f0f9fb}
 .eds-logout{background:linear-gradient(90deg,var(--c-primary),var(--c-secondary));color:#fff;border:none;padding:6px 12px;border-radius:10px;font-weight:700;cursor:pointer}
 .eds-logout:hover{filter:brightness(1.08)}
 

@@ -29,6 +29,10 @@
     .refresh-btn:hover{filter:brightness(1.1)}
     .empty{text-align:center;color:#666;padding:40px 20px}
     code{background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:.8rem}
+    .action-btn{background:transparent;border:none;font-size:1.2rem;cursor:pointer;padding:4px 8px;border-radius:4px}
+    .action-btn:hover{background:#e0f2f7}
+    .edit-btn{color:#1565c0}
+    .delete-btn{color:#c62828}
   </style>
 </head>
 <body>
@@ -90,7 +94,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
       container.innerHTML='<div class="empty">No hay usuarios en esta categoría</div>';
       return;
     }
-    let html='<table><thead><tr><th>ID</th><th>Nombre</th><th>Email Institucional</th><th>Rol</th><th>Registrado</th></tr></thead><tbody>';
+    let html='<table><thead><tr><th>ID</th><th>Nombre</th><th>Email Institucional</th><th>Rol</th><th>Registrado</th><th>Acciones</th></tr></thead><tbody>';
     users.forEach(u=>{
       const roleLabel={admin:'Administrador',teacher:'Docente',student:'Estudiante',guardian:'Tutor'}[u.role]||u.role;
       html+=`<tr>
@@ -99,6 +103,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
         <td><code>${u.email}</code></td>
         <td><span class="badge ${getBadgeClass(u.role)}">${roleLabel}</span></td>
         <td>${new Date(u.created_at).toLocaleString('es-ES')}</td>
+        <td>
+          <button class="action-btn edit-btn" data-id="${u.id}" title="Editar">✏️</button>
+          <button class="action-btn delete-btn" data-id="${u.id}" title="Eliminar">🗑️</button>
+        </td>
       </tr>`;
     });
     html+='</tbody></table>';
@@ -120,6 +128,29 @@ document.addEventListener('DOMContentLoaded',async()=>{
       document.getElementById('list-todos').innerHTML='<div class="empty" style="color:#c0392b">⚠️ '+err.message+'</div>';
     }
   };
+
+  const deleteUser=async(id)=>{
+    if(!confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.'))return;
+    try{
+      const res=await fetch(api.baseURL+'/users/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
+      if(!res.ok)throw new Error('Error al eliminar');
+      alert('✅ Usuario eliminado correctamente');
+      loadUsers();
+    }catch(err){alert('❌ '+err.message);}
+  };
+
+  const editUser=(id)=>{
+    alert('🚧 La edición de usuarios estará disponible en la siguiente versión.\n\nPor ahora puedes eliminar y crear uno nuevo.');
+  };
+
+  document.addEventListener('click',e=>{
+    if(e.target.classList.contains('delete-btn')){
+      deleteUser(e.target.dataset.id);
+    }
+    if(e.target.classList.contains('edit-btn')){
+      editUser(e.target.dataset.id);
+    }
+  });
 
   document.getElementById('refresh').addEventListener('click',loadUsers);
   loadUsers();
